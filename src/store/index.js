@@ -18,8 +18,6 @@ export default new Vuex.Store({
     FETCH_DATA: async ({commit}) => {
       await axios.get('/example.json')
       .then(({data}) => {
-        console.log('FETCH_DATA', data)
-        
         commit('SET_DATA', data)
       })
     }

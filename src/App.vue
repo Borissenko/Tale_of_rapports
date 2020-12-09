@@ -1,28 +1,42 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <div v-if="Object.keys(GET_DATA).length === 0" @click="FETCH_DATA" class="introduction">
+      Обработать данные
+    </div>
+    <div v-else class="wrapper">
+      GET_DATA = {{GET_DATA}}
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import {mapGetters, mapActions} from 'vuex'
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
+  computed: {
+    ...mapGetters([
+      'GET_DATA'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'FETCH_DATA'
+    ])
   }
 }
 </script>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.introduction {
+  width: 200px;
+  margin: 100px auto;
+  cursor: pointer;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  text-transform: uppercase;
+  
+  &:hover {
+    color: blue;
+  }
 }
+
 </style>

@@ -12,7 +12,9 @@
         </div>
       </div>
       <hr>
-      GET_DATA = {{GET_DATA}}
+      <h1>{{GET_DATA.H1Content}}</h1>
+      <tabletitle>{{GET_DATA.TableName}}</tabletitle>
+      
     </div>
   </div>
 </template>
@@ -69,6 +71,12 @@ body {
 .theme-type__lite {
   background: beige;
   color: #777777;
+}
+
+h1 {
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
 }
 
 .wrapper {

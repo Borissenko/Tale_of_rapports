@@ -18,12 +18,18 @@
         <thead>
         <tr>
           <th v-for="(th, ind) of GET_TABLE_HEADERS" :key="ind + 'th'">
-            {{th}}
+            {{th.title}}
           </th>
         </tr>
         </thead>
+        <tbody>
+        <tr v-for="(field, ind) of GET_TABLE_FIELDS" :key="ind + 'field'">
+          <td v-for="(th, ind) of GET_TABLE_HEADERS" :key="ind + 'fieldName'">
+            {{field[th.name]}}
+          </td>
+        </tr>
+        </tbody>
       </table>
-    
     </div>
   </div>
 </template>
@@ -38,7 +44,8 @@ export default {
   computed: {
     ...mapGetters([
       'GET_DATA',
-      'GET_TABLE_HEADERS'
+      'GET_TABLE_HEADERS',
+      'GET_TABLE_FIELDS'
     ]),
   },
   watch: {
@@ -80,7 +87,8 @@ export default {
 }
 
 .wrapper {
-  max-width: 700px;
+  max-width: 1400px;
+  min-width: 1100px;
   margin: 20px auto;
   
   header {
@@ -91,13 +99,35 @@ export default {
     .btn_header {
       max-width: 120px;
       margin: 10px 0 10px auto;
-      font-size: 11px;
-      font-weight: 300;
       
       &:hover {
         cursor: pointer;
         color: $SimplePageHover;
       }
+    }
+  }
+  
+  table {
+    width: 100%;
+    
+    caption {
+      padding: 10px;
+      text-transform: uppercase;
+    }
+    
+    tr th {
+      padding: 5px 5px 0 5px;
+      border-top: 1px $mainColor solid;
+      border-bottom: 1px $mainColor solid;
+    }
+    
+    tr td {
+      padding-right: 5px;
+      
+    }
+    
+    tr:first-child td{
+      padding-top: 10px;
     }
   }
 }

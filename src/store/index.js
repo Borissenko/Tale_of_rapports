@@ -23,8 +23,10 @@ export default new Vuex.Store({
         })
       }
       headers.sort((a, b) => a.order - b.order)
+      headers.sort((a, b) => a.order - b.order)
       return headers.filter(item => item.show !== 0)
-    }
+    },
+    GET_TABLE_FIELDS: ({data}) => data.Data
   },
   mutations: {
     SET_DATA: (state, data) => state.data = data

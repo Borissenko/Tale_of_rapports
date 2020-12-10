@@ -21,17 +21,21 @@
 	"ColsTypes":	
 	{
 		"id_ves": "NUM",
-		"date": "DATE",
-		"permit": "STR",
 		"id_rank": "NUM",
 		"id_region": "NUM",
 		"id_region_to": "NUM",
-		"date_arrival": "DATE",
 		"id_information_source": "NUM",
-		"timestamp": "DTIME",
+		"id_regime": "NUM",
+
+		"permit": "STR",
+
 		"note": "TAREA",
+
+		"timestamp": "DTIME",
 		"datetime": "DTIME",
-		"id_regime": "NUM"
+
+		"date": "DATE",
+		"date_arrival": "DATE"
 	},
 	"ColsOrder":
 	{

@@ -32,7 +32,7 @@
         </thead>
         <tbody>
         <tr v-for="(field, ind) of GET_TABLE_FIELDS" :key="ind + 'field'"
-            @dblclick="onRedaction(field)"
+            @click="onRedaction(field)"
         >
           <td v-for="(th, ind) of GET_TABLE_HEADERS" :key="ind + 'fieldName'">
             {{field[th.name]}}
@@ -41,21 +41,26 @@
         </tbody>
       </table>
       
-      <forms class="forms"/>
+      <forms-block @closeForms="showForms = false"
+                   v-if="showForms"
+                   :field = showForms
+                   class="forms-block"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import {mapGetters, mapActions, mapMutations} from 'vuex'
-import Forms from "@/components/Forms";
+import FormsBlock from "@/components/Forms";
 
 export default {
   components: {
-    Forms
+    FormsBlock
   },
   data: () => ({
-    isDefaultTheme: false
+    isDefaultTheme: false,
+    showForms: false
   }),
   computed: {
     ...mapGetters([
@@ -84,6 +89,7 @@ export default {
       this.isDefaultTheme = !this.isDefaultTheme
     },
     onRedaction(field) {
+      this.showForms = field
       console.log('field ==', field)
     }
   }
@@ -138,47 +144,53 @@ export default {
       padding: 10px;
       text-transform: uppercase;
     }
-    
-    tr th {
+  
+    thead tr th {
       border-top: 1px $mainColor solid;
       border-bottom: 1px $mainColor solid;
       cursor: pointer;
       
+      &:hover {
+        color: $mainColorHover;
+      }
+      
       &:not(:first-child) :nth-child(2) {
         padding: 5px 5px;
       }
+      
       &:not(:first-child) :first-child, :last-child {
+        width: 18px;
+        height: 18px;
         border: $mainColor 1px solid;
-        border-radius: 90%;
+        border-radius: 25%;
         
         &:hover {
           background: $liteHover;
         }
       }
+      
       &:last-child :last-child {
         border: none;
       }
       
     }
-    
-    tr td {
-      padding-right: 5px;
   
-      &:hover {
-        background: $liteHover;
-        cursor: pointer;
-      }
+    tbody tr td {
+      padding-right: 5px;
     }
     
-    tr:first-child td{
-      padding-top: 10px;
+    tbody tr:hover {
+      background: $liteHover;
+      cursor: pointer;
     }
   }
   
-  .forms {
+  .forms-block {
     position: absolute;
     left: 60px;
     top: 100px;
+    width: 470px;
+    height: 650px;
     border: #777777 1px solid;
   }
 }

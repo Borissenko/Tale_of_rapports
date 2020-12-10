@@ -6,7 +6,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    data: {}
+    data: {},
+    sortingType: ['id_ves', true]
   },
   getters: {
     GET_DATA: state => state.data,
@@ -26,10 +27,26 @@ export default new Vuex.Store({
       headers.sort((a, b) => a.order - b.order)
       return headers.filter(item => item.show !== 0)
     },
-    GET_TABLE_FIELDS: ({data}) => data.Data
+    GET_TABLE_FIELDS: ({data, sortingType}) => {
+      function reducePointing(val) {
+        if(val == null)
+          return ''
+        return val.toString().replace(/[=\-:\s]/g, '')
+      }
+  
+      if (sortingType[1] === true) {
+        return data.Data.sort((a, b) => reducePointing(a[sortingType[0]]) - reducePointing(b[sortingType[0]]))
+      } else {
+        return data.Data.sort((a, b) => reducePointing(b[sortingType[0]]) - reducePointing(a[sortingType[0]]))
+      }
+    }
   },
   mutations: {
-    SET_DATA: (state, data) => state.data = data
+    SET_DATA: (state, data) => state.data = data,
+    SET_SORTING_TYPE: (state, sortingType) => {
+      let sortingDirection = state.sortingType[0] === sortingType ? !state.sortingType[1] : true
+      state.sortingType = [sortingType, sortingDirection]
+    }
   },
   actions: {
     FETCH_DATA: async ({commit}) => {

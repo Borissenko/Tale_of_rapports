@@ -1,0 +1,18 @@
+$mainColor: #3f8657;
+$mainColorHover: #55b475;
+$SimplePageColor: #777777;
+$SimplePageHover: #3b3636;
+$SimplePageBackground: beige;
+
+
+
+
+$generalFontSize_px: 16px;
+$generalFontSize_number: 16;
+
+@function rem($n) {
+  @return #{($n / $generalFontSize_number)}rem;
+}
+
+
+

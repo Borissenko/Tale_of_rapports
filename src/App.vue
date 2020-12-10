@@ -5,16 +5,25 @@
     </div>
     <div v-else class="wrapper">
       <hr>
-      <div class="header">
-        <div class="header__title">{{GET_DATA.PageTitle}}</div>
-        <div @click="onThemeChange" class="header__btn">Сменить тему на
+      <header>
+        <h1>{{GET_DATA.PageTitle}}</h1>
+        <div @click="onThemeChange" class="btn_header">Сменить тему на
           {{isDefaultTheme ? 'загруженную' : 'стандартную'}}
         </div>
-      </div>
+      </header>
       <hr>
-      <h1>{{GET_DATA.H1Content}}</h1>
-      <tabletitle>{{GET_DATA.TableName}}</tabletitle>
-      
+      <h2>{{GET_DATA.H1Content}}</h2>
+      <table>
+        <caption>{{GET_DATA.TableName}}</caption>
+        <thead>
+        <tr>
+          <th v-for="(th, ind) of GET_TABLE_HEADERS" :key="ind + 'th'">
+            {{th}}
+          </th>
+        </tr>
+        </thead>
+      </table>
+    
     </div>
   </div>
 </template>
@@ -28,7 +37,8 @@ export default {
   }),
   computed: {
     ...mapGetters([
-      'GET_DATA'
+      'GET_DATA',
+      'GET_TABLE_HEADERS'
     ]),
   },
   watch: {
@@ -51,10 +61,6 @@ export default {
 </script>
 
 <style lang="scss">
-body {
-  background: #e9ecec;
-  color: #3f8657;
-}
 
 .introduction {
   width: 200px;
@@ -64,35 +70,25 @@ body {
   text-transform: uppercase;
   
   &:hover {
-    color: #0bb7ce;
+    color: $mainColorHover;
   }
 }
 
 .theme-type__lite {
-  background: beige;
-  color: #777777;
-}
-
-h1 {
-  margin: 0;
-  padding: 0;
-  font-size: 18px;
+  background: $SimplePageBackground;
+  color: $SimplePageColor;
 }
 
 .wrapper {
   max-width: 700px;
   margin: 20px auto;
   
-  .header {
+  header {
     display: flex;
     flex-flow: row wrap;
     align-items: center;
-    //justify-content: space-between;
-    font-size: 22px;
-    font-weight: bold;
-    text-transform: uppercase;
     
-    &__btn {
+    .btn_header {
       max-width: 120px;
       margin: 10px 0 10px auto;
       font-size: 11px;
@@ -100,7 +96,7 @@ h1 {
       
       &:hover {
         cursor: pointer;
-        color: #3b3636;
+        color: $SimplePageHover;
       }
     }
   }

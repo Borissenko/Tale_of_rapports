@@ -31,21 +31,29 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(field, ind) of GET_TABLE_FIELDS" :key="ind + 'field'">
+        <tr v-for="(field, ind) of GET_TABLE_FIELDS" :key="ind + 'field'"
+            @dblclick="onRedaction(field)"
+        >
           <td v-for="(th, ind) of GET_TABLE_HEADERS" :key="ind + 'fieldName'">
             {{field[th.name]}}
           </td>
         </tr>
         </tbody>
       </table>
+      
+      <forms class="forms"/>
     </div>
   </div>
 </template>
 
 <script>
 import {mapGetters, mapActions, mapMutations} from 'vuex'
+import Forms from "@/components/Forms";
 
 export default {
+  components: {
+    Forms
+  },
   data: () => ({
     isDefaultTheme: false
   }),
@@ -74,6 +82,9 @@ export default {
     onThemeChange() {
       document.body.classList.toggle('theme-type__lite')
       this.isDefaultTheme = !this.isDefaultTheme
+    },
+    onRedaction(field) {
+      console.log('field ==', field)
     }
   }
 }
@@ -121,6 +132,7 @@ export default {
   
   table {
     width: 100%;
+    user-select: none;
     
     caption {
       padding: 10px;
@@ -131,7 +143,6 @@ export default {
       border-top: 1px $mainColor solid;
       border-bottom: 1px $mainColor solid;
       cursor: pointer;
-      user-select: none;
       
       &:not(:first-child) :nth-child(2) {
         padding: 5px 5px;
@@ -152,12 +163,23 @@ export default {
     
     tr td {
       padding-right: 5px;
-      cursor: pointer;
+  
+      &:hover {
+        background: $liteHover;
+        cursor: pointer;
+      }
     }
     
     tr:first-child td{
       padding-top: 10px;
     }
+  }
+  
+  .forms {
+    position: absolute;
+    left: 60px;
+    top: 100px;
+    border: #777777 1px solid;
   }
 }
 </style>

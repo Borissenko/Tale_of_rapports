@@ -46,7 +46,8 @@ export default new Vuex.Store({
     SET_SORTING_TYPE: (state, sortingType) => {
       let sortingDirection = state.sortingType[0] === sortingType ? !state.sortingType[1] : true
       state.sortingType = [sortingType, sortingDirection]
-    }
+    },
+    CHANGE_DATA_ORDERS: (state, orders) => state.data.ColsOrder = orders
   },
   actions: {
     FETCH_DATA: async ({commit}) => {
@@ -54,7 +55,18 @@ export default new Vuex.Store({
       .then(({data}) => {
         commit('SET_DATA', data)
       })
+    },
+    CHANGE_ORDER: ({commit, state}, {name, nn}) => {
+      let orders = state.data.ColsOrder
+      let targetNameOrder = orders[name]
+      
+      for(let key in orders) {  //ищем поле с ордером на один больше/меньше
+        if(orders[key] === targetNameOrder + nn) {
+          orders[key] = targetNameOrder    //
+          orders[name] = targetNameOrder + nn
+        }
+      }
+      commit('CHANGE_DATA_ORDERS', orders)
     }
-  },
-  modules: {}
+  }
 })

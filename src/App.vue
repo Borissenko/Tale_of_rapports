@@ -17,11 +17,16 @@
         <caption>{{GET_DATA.TableName}}</caption>
         <thead>
         <tr>
-          <th v-for="(th, ind) of GET_TABLE_HEADERS"
-              :key="ind + 'th'"
-              @click="SET_SORTING_TYPE(th.name)"
-          >
-            {{th.title}}
+          <th v-for="(th, ind) of GET_TABLE_HEADERS" :key="ind + 'th'">
+            <span v-if="ind !== 0"
+                  @click="CHANGE_ORDER({name: th.name, nn: -1})">
+              <
+            </span>
+            <span @click="SET_SORTING_TYPE(th.name)">{{th.title}}</span>
+            <span v-if=" ind !== GET_TABLE_HEADERS.length - 1"
+                  @click="CHANGE_ORDER({name: th.name, nn: 1})">
+              >
+            </span>
           </th>
         </tr>
         </thead>
@@ -60,7 +65,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'FETCH_DATA'
+      'FETCH_DATA',
+      'CHANGE_ORDER'
     ]),
     ...mapMutations([
       'SET_SORTING_TYPE'
@@ -93,8 +99,8 @@ export default {
 }
 
 .wrapper {
-  max-width: 1400px;
-  min-width: 1100px;
+  max-width: 1600px;
+  min-width: 1400px;
   margin: 20px auto;
   
   header {
@@ -122,10 +128,26 @@ export default {
     }
     
     tr th {
-      padding: 5px 5px 0 5px;
       border-top: 1px $mainColor solid;
       border-bottom: 1px $mainColor solid;
       cursor: pointer;
+      user-select: none;
+      
+      &:not(:first-child) :nth-child(2) {
+        padding: 5px 5px;
+      }
+      &:not(:first-child) :first-child, :last-child {
+        border: $mainColor 1px solid;
+        border-radius: 90%;
+        
+        &:hover {
+          background: $liteHover;
+        }
+      }
+      &:last-child :last-child {
+        border: none;
+      }
+      
     }
     
     tr td {

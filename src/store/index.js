@@ -31,11 +31,11 @@ export default new Vuex.Store({
     },
     GET_TABLE_FIELDS: ({data, sortingType}) => {
       function reducePointing(val) {
-        if(val == null)
+        if (val == null)
           return ''
         return val.toString().replace(/[=\-:\s]/g, '')
       }
-  
+      
       if (sortingType[1] === true) {
         return data.Data.sort((a, b) => reducePointing(a[sortingType[0]]) - reducePointing(b[sortingType[0]]))
       } else {
@@ -50,8 +50,10 @@ export default new Vuex.Store({
       state.sortingType = [sortingType, sortingDirection]
     },
     CHANGE_DATA_ORDERS: (state, orders) => state.data.ColsOrder = orders,
-    REFRESH_RAPPORT: (state, rapport) => {
-    
+    REFRESH_RAPPORT: ({data}, rapport) => {
+      let targetIndex = data.Data.findIndex(item => item.id_ves === rapport.id_ves)
+      Vue.delete(data.Data, targetIndex)
+      Vue.set(data.Data, targetIndex, rapport)
     }
   },
   actions: {
@@ -65,8 +67,8 @@ export default new Vuex.Store({
       let orders = state.data.ColsOrder
       let targetNameOrder = orders[name]
       
-      for(let key in orders) {  //ищем поле с ордером на один больше/меньше
-        if(orders[key] === targetNameOrder + nn) {
+      for (let key in orders) {  //ищем поле с ордером на один больше/меньше
+        if (orders[key] === targetNameOrder + nn) {
           orders[key] = targetNameOrder    //
           orders[name] = targetNameOrder + nn
         }

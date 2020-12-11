@@ -57,12 +57,9 @@ export default {
         let refreshedField = {
           id_ves: this.row.id_ves
         }
-        
-        for(let field of this.inputForms) {
+        for (let field of this.inputForms) {
           refreshedField[field.name] = field.value
         }
-        console.log('refreshedField ===', refreshedField)
-        
         this.REFRESH_RAPPORT(refreshedField)
       }
       this.$emit('closeForms')
@@ -78,19 +75,21 @@ export default {
     }
     
     for (let header of this.GET_TABLE_HEADERS) {
-      let value = ''
-      if(header.type === 'DTIME') {
-        value = this.row[header.name].replace(/\s/g, 'T')
-      } else {
-        value = this.row[header.name]
+      if (header.name !== 'id_ves') {
+        let value = ''
+        if (header.type === 'DTIME') {
+          value = this.row[header.name].replace(/\s/g, 'T')
+        } else {
+          value = this.row[header.name]
+        }
+        
+        this.inputForms.push({
+          name: header.name,
+          title: header.title,
+          value,
+          formType: inputTypeConverting[header.type]
+        })
       }
-      
-      this.inputForms.push({
-        name: header.name,
-        title: header.title,
-        value,
-        formType: inputTypeConverting[header.type]
-      })
     }
   }
 }

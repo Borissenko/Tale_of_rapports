@@ -1,6 +1,7 @@
 <template>
   <div class="forms-wrapper">
     <h1>Корректировка ССД</h1>
+    field = {{field}}
     <hr>
     <h2>ID донесения - {{field.id_ves}}</h2>
     <div>
@@ -20,14 +21,15 @@
       </div>
     </div>
     <div class="controls">
-      <div @click="onFormsAvoid" class="controls__btn">Не сохранять</div>
-      <div @click="onFormsSave" class="controls__btn">Сохранить</div>
+      <div @click="onFormsAction(0)" class="controls__btn">Не сохранять</div>
+      <div @click="onFormsAction(1)" class="controls__btn">Сохранить</div>
     </div>
-    field = {{field}}
   </div>
 </template>
 
 <script>
+import {mapMutations} from 'vuex'
+
 export default {
   props: {
     field: {
@@ -39,7 +41,7 @@ export default {
     inputForms: {
       "id_rank": {
         name: 'Категория',
-        value: 'this.field.id_rank',
+        value: '',
         formType: 'text'
       },
       "id_region": {
@@ -77,7 +79,7 @@ export default {
         value: '',
         formType: 'date'
       },
-      "timestamp": {
+      "timestamp": {  //
         name: 'Дата, время',
         value: '',
         formType: 'datetime-local'
@@ -86,7 +88,7 @@ export default {
         name: 'Дата, время 2',
         value: '',
         formType: 'datetime-local'
-      },
+      }
     },
     textAreaForms: {
       note: {
@@ -95,12 +97,47 @@ export default {
       }
     }
   }),
+  created() {
+    for (let key in this.field) {
+      if (this.field.hasOwnProperty(key) && (key in this.inputForms)) {
+        this.inputForms[key].value = this.field[key]
+      }
+    }
+    this.textAreaForms.note.value = this.field.note
+  },
   methods: {
-    onFormsSave() {
-      console.log('inputForms ==', this.inputForms)
-      this.$emit('closeForms')
-    },
-    onFormsAvoid() {
+    ...mapMutations([
+      'REFRESH_RAPPORT'
+    ]),
+    onFormsAction(type) {
+      if (type === 1) {
+        let refreshedField = {
+          id_ves: this.field.id_ves
+        }
+        
+        for (let key in this.field) {
+          if (this.field.hasOwnProperty(key) && (key in this.inputForms)) {
+            refreshedField[key] = this.inputForms[key].value
+          }
+        }
+        
+        
+        let field = {
+          "id_ves": 14009,
+          "date": "2018-08-06",
+          "permit": null,
+          "id_rank": 3,
+          "id_region": 1274,
+          "id_region_to": 277,
+          "date_arrival": "2018-08-07",
+          "id_information_source": 112,
+          "timestamp": "2018-08-16 15:24:25",
+          "note": null,
+          "datetime": "2018-08-06 12:00:00",
+          "id_regime": 0
+        }
+        // this.REFRESH_RAPPORT(refreshedField)
+      }
       this.$emit('closeForms')
     }
   }

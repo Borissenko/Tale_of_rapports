@@ -30,6 +30,7 @@
           </th>
         </tr>
         </thead>
+        
         <tbody>
         <tr v-for="(field, ind) of GET_TABLE_FIELDS" :key="ind + 'field'"
             @click="onRedaction(field)"
@@ -90,7 +91,6 @@ export default {
     },
     onRedaction(field) {
       this.showForms = field
-      console.log('field ==', field)
     }
   }
 }

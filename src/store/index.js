@@ -13,6 +13,7 @@ export default new Vuex.Store({
     GET_DATA: state => state.data,
     GET_TABLE_HEADERS: ({data}) => {
       let ColsTitlesEntries = Object.entries(data.ColsTitles)
+      console.log('ColsTitlesEntries ===', ColsTitlesEntries)
       let headers = []
       for (let headerEntries of ColsTitlesEntries) {
         headers.push({
@@ -47,7 +48,10 @@ export default new Vuex.Store({
       let sortingDirection = state.sortingType[0] === sortingType ? !state.sortingType[1] : true
       state.sortingType = [sortingType, sortingDirection]
     },
-    CHANGE_DATA_ORDERS: (state, orders) => state.data.ColsOrder = orders
+    CHANGE_DATA_ORDERS: (state, orders) => state.data.ColsOrder = orders,
+    REFRESH_RAPPORT: (state, rapport) => {
+    
+    }
   },
   actions: {
     FETCH_DATA: async ({commit}) => {

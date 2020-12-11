@@ -21,7 +21,7 @@ export default new Vuex.Store({
           title: headerEntries[1],
           type: data.ColsTypes[headerEntries[0]],
           order: data.ColsOrder[headerEntries[0]],
-          show: data.ColsShow[headerEntries[0]],
+          show: data.ColsShow[headerEntries[0]]
         })
       }
       headers.sort((a, b) => a.order - b.order)

@@ -1,9 +1,8 @@
 <template>
   <div class="forms-wrapper">
     <h1>Корректировка ССД</h1>
-    field = {{field}}
     <hr>
-    <h2>ID донесения - {{field.id_ves}}</h2>
+    <h2>ID донесения - {{row.id_ves}}</h2>
     <div>
       <div v-for="(form, key, ind) of inputForms"
            :key="ind + 'num'"
@@ -15,10 +14,12 @@
                :placeholder="form.name"
         >
       </div>
-      <div>
-        <div>{{textAreaForms.note.name}}</div>
-        <textarea cols="70" rows="6"></textarea>
-      </div>
+<!--      <div>-->
+<!--        <div>{{textAreaForms.note.name}}</div>-->
+<!--        <textarea cols="70" rows="6"-->
+<!--                  v-model="textAreaForms.note.value"-->
+<!--        ></textarea>-->
+<!--      </div>-->
     </div>
     <div class="controls">
       <div @click="onFormsAction(0)" class="controls__btn">Не сохранять</div>
@@ -28,88 +29,106 @@
 </template>
 
 <script>
-import {mapMutations} from 'vuex'
+import {mapGetters, mapMutations} from 'vuex'
 
 export default {
   props: {
-    field: {
+    row: {
       type: Object,
       required: true
     }
   },
+  computed: {
+    ...mapGetters([
+      'GET_TABLE_HEADERS'
+    ]),
+  },
   data: () => ({
-    inputForms: {
-      "id_rank": {
-        name: 'Категория',
-        value: '',
-        formType: 'text'
-      },
-      "id_region": {
-        name: 'Регион',
-        value: '',
-        formType: 'text'
-      },
-      "id_region_to": {
-        name: 'Регион следования',
-        value: '',
-        formType: 'text'
-      },
-      "id_information_source": {
-        name: 'Источник информации',
-        value: '',
-        formType: 'text'
-      },
-      "id_regime": {
-        name: 'Код запаса',
-        value: '',
-        formType: 'text'
-      },
-      "permit": {
-        name: 'Разрешение',
-        value: '',
-        formType: 'text'
-      },
-      "date": {
-        name: 'Дата',
-        value: '',
-        formType: 'date'
-      },
-      "date_arrival": {
-        name: 'Дата прибытия',
-        value: '',
-        formType: 'date'
-      },
-      "timestamp": {  //
-        name: 'Дата, время',
-        value: '',
-        formType: 'datetime-local'
-      },
-      "datetime": {
-        name: 'Дата, время 2',
-        value: '',
-        formType: 'datetime-local'
-      }
-    },
-    textAreaForms: {
-      note: {
-        name: 'Примечание',
-        value: ''
-      }
-    }
+    inputForms: {},
+    textAreaForms: {}
+    // inputFo: {
+    //   "id_rank": {
+    //     name: 'Категория',
+    //     value: '',
+    //     formType: 'text'
+    //   },
+    //   "id_region": {
+    //     name: 'Регион',
+    //     value: '',
+    //     formType: 'text'
+    //   },
+    //   "id_region_to": {
+    //     name: 'Регион следования',
+    //     value: '',
+    //     formType: 'text'
+    //   },
+    //   "id_information_source": {
+    //     name: 'Источник информации',
+    //     value: '',
+    //     formType: 'text'
+    //   },
+    //   "id_regime": {
+    //     name: 'Код запаса',
+    //     value: '',
+    //     formType: 'text'
+    //   },
+    //   "permit": {
+    //     name: 'Разрешение',
+    //     value: '',
+    //     formType: 'text'
+    //   },
+    //   "date": {
+    //     name: 'Дата',
+    //     value: '',
+    //     formType: 'date'
+    //   },
+    //   "date_arrival": {
+    //     name: 'Дата прибытия',
+    //     value: '',
+    //     formType: 'date'
+    //   },
+    //   "timestamp": {  //
+    //     name: 'Дата, время',
+    //     value: '',
+    //     formType: 'datetime-local'
+    //   },
+    //   "datetime": {
+    //     name: 'Дата, время 2',
+    //     value: '',
+    //     formType: 'datetime-local'
+    //   }
+    // },
+    // textAreaFo: {
+    //   note: {
+    //     name: 'Примечание',
+    //     value: ''
+    //   }
+    // }
   }),
   created() {
-    for (let key in this.field) {
-      if (this.field.hasOwnProperty(key) && (key in this.inputForms)) {
-        this.inputForms[key].value = this.field[key]
+    let inputTypeConverting = {
+      "NUM": 'text',
+      "STR": 'text',
+      "DATE": 'date',
+      "DTIME": 'datetime-local',
+      "TAREA": 'textarea'
+    }
+    
+    for(let header of this.GET_TABLE_HEADERS) {
+      if(header.type !== 'TAREA') {
+        this.inputForms[header.name] = {
+          name: header.title,
+          value: this.row[header.name],
+          formType: inputTypeConverting[header.type]
+        }
       }
     }
-    this.textAreaForms.note.value = this.field.note
   },
   methods: {
     ...mapMutations([
       'REFRESH_RAPPORT'
     ]),
-    onFormsAction(type) {
+    onFormsAction(type) {  //в каком формате взяли, в таком же формате и отдаем
       if (type === 1) {
         let refreshedField = {
           id_ves: this.field.id_ves
@@ -119,22 +138,6 @@ export default {
           if (this.field.hasOwnProperty(key) && (key in this.inputForms)) {
             refreshedField[key] = this.inputForms[key].value
           }
-        }
-        
-        
-        let field = {
-          "id_ves": 14009,
-          "date": "2018-08-06",
-          "permit": null,
-          "id_rank": 3,
-          "id_region": 1274,
-          "id_region_to": 277,
-          "date_arrival": "2018-08-07",
-          "id_information_source": 112,
-          "timestamp": "2018-08-16 15:24:25",
-          "note": null,
-          "datetime": "2018-08-06 12:00:00",
-          "id_regime": 0
         }
         // this.REFRESH_RAPPORT(refreshedField)
       }

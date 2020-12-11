@@ -44,7 +44,7 @@
       
       <forms-block @closeForms="showForms = false"
                    v-if="showForms"
-                   :field = showForms
+                   :row = showForms
                    class="forms-block"
       />
     </div>

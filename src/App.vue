@@ -42,9 +42,14 @@
         </tbody>
       </table>
       
+      
+      <div class="controls">
+        <div @click="takeNewRapports" class="controls__btn">Применить изменения</div>
+      </div>
+      
       <forms-block @closeForms="showForms = false"
                    v-if="showForms"
-                   :row = showForms
+                   :row=showForms
                    class="forms-block"
       />
     </div>
@@ -91,7 +96,24 @@ export default {
     },
     onRedaction(field) {
       this.showForms = field
+    },
+    takeNewRapports() {
+      let aa = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+      let data = []
+      let XLrow = {}
+      
+      this.GET_TABLE_HEADERS.forEach((cell, ind) => {
+        XLrow[aa[ind]] = cell.title
+      })
+      data.push(XLrow)
+      
+      
+      
+      var data1 = [{a: 1, b: 10}, {a: 2, b: 20}, {a: 244, b: 2044}]
+      var opts = [{sheetid: 'Обновленные рапорты', header: true}]
+      var res = alasql('SELECT * INTO XLSX("restest344b.xlsx",?) FROM ?', [opts, [data]])
     }
+    
   }
 }
 </script>
@@ -144,7 +166,7 @@ export default {
       padding: 10px;
       text-transform: uppercase;
     }
-  
+    
     thead tr th {
       border-top: 1px $mainColor solid;
       border-bottom: 1px $mainColor solid;
@@ -174,7 +196,7 @@ export default {
       }
       
     }
-  
+    
     tbody tr td {
       padding-right: 5px;
     }

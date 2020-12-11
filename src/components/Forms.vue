@@ -14,6 +14,7 @@
                :placeholder="form.title"
         >
       </div>
+      
       <div v-for="(form, ind) of inputForms.filter(form => form.formType === 'textarea')"
            :key="ind + 'textarea'"
       >
@@ -58,7 +59,11 @@ export default {
           id_ves: this.row.id_ves
         }
         for (let field of this.inputForms) {
-          refreshedField[field.name] = field.value
+          if(field.formType === 'datetime-local') {
+            refreshedField[field.name] = field.value.replace(/T/, ' ')
+          } else {
+            refreshedField[field.name] = field.value
+          }
         }
         this.REFRESH_RAPPORT(refreshedField)
       }
@@ -78,7 +83,7 @@ export default {
       if (header.name !== 'id_ves') {
         let value = ''
         if (header.type === 'DTIME') {
-          value = this.row[header.name].replace(/\s/g, 'T')
+          value = this.row[header.name].replace(/\s/g, 'T').split('Z')[0]
         } else {
           value = this.row[header.name]
         }
@@ -113,23 +118,6 @@ export default {
   textarea {
     width: 100%;
     resize: none;
-  }
-  
-  .controls {
-    display: flex;
-    margin-top: 20px;
-    justify-content: space-between;
-    
-    &__btn {
-      padding: 5px;
-      border: $darkGrey 1px solid;
-      color: $mainColor;
-      cursor: pointer;
-      
-      &:hover {
-        color: $mainColorHover;
-      }
-    }
   }
 }
 </style>

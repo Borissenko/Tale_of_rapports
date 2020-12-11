@@ -4,22 +4,24 @@
     <hr>
     <h2>ID донесения - {{row.id_ves}}</h2>
     <div>
-      <div v-for="(form, key, ind) of inputForms"
-           :key="ind + 'num'"
+      <div v-for="(form, ind) of inputForms.filter(form => form.formType !== 'textarea')"
+           :key="ind + 'input'"
            class="field"
       >
-        {{form.name}}
+        {{form.title}}
         <input :type="form.formType"
                v-model="form.value"
-               :placeholder="form.name"
+               :placeholder="form.title"
         >
       </div>
-<!--      <div>-->
-<!--        <div>{{textAreaForms.note.name}}</div>-->
-<!--        <textarea cols="70" rows="6"-->
-<!--                  v-model="textAreaForms.note.value"-->
-<!--        ></textarea>-->
-<!--      </div>-->
+      <div v-for="(form, ind) of inputForms.filter(form => form.formType === 'textarea')"
+           :key="ind + 'textarea'"
+      >
+        <div>{{form.title}}</div>
+        <textarea cols="70" rows="6"
+                  v-model="form.value"
+        />
+      </div>
     </div>
     <div class="controls">
       <div @click="onFormsAction(0)" class="controls__btn">Не сохранять</div>
@@ -41,70 +43,31 @@ export default {
   computed: {
     ...mapGetters([
       'GET_TABLE_HEADERS'
-    ]),
+    ])
   },
   data: () => ({
-    inputForms: {},
-    textAreaForms: {}
-    // inputFo: {
-    //   "id_rank": {
-    //     name: 'Категория',
-    //     value: '',
-    //     formType: 'text'
-    //   },
-    //   "id_region": {
-    //     name: 'Регион',
-    //     value: '',
-    //     formType: 'text'
-    //   },
-    //   "id_region_to": {
-    //     name: 'Регион следования',
-    //     value: '',
-    //     formType: 'text'
-    //   },
-    //   "id_information_source": {
-    //     name: 'Источник информации',
-    //     value: '',
-    //     formType: 'text'
-    //   },
-    //   "id_regime": {
-    //     name: 'Код запаса',
-    //     value: '',
-    //     formType: 'text'
-    //   },
-    //   "permit": {
-    //     name: 'Разрешение',
-    //     value: '',
-    //     formType: 'text'
-    //   },
-    //   "date": {
-    //     name: 'Дата',
-    //     value: '',
-    //     formType: 'date'
-    //   },
-    //   "date_arrival": {
-    //     name: 'Дата прибытия',
-    //     value: '',
-    //     formType: 'date'
-    //   },
-    //   "timestamp": {  //
-    //     name: 'Дата, время',
-    //     value: '',
-    //     formType: 'datetime-local'
-    //   },
-    //   "datetime": {
-    //     name: 'Дата, время 2',
-    //     value: '',
-    //     formType: 'datetime-local'
-    //   }
-    // },
-    // textAreaFo: {
-    //   note: {
-    //     name: 'Примечание',
-    //     value: ''
-    //   }
-    // }
+    inputForms: []
   }),
+  methods: {
+    ...mapMutations([
+      'REFRESH_RAPPORT'
+    ]),
+    onFormsAction(type) {  //в каком формате получили, в таком же формате и отдаем
+      if (type === 1) {
+        let refreshedField = {
+          id_ves: this.row.id_ves
+        }
+        
+        for(let field of this.inputForms) {
+          refreshedField[field.name] = field.value
+        }
+        console.log('refreshedField ===', refreshedField)
+        
+        this.REFRESH_RAPPORT(refreshedField)
+      }
+      this.$emit('closeForms')
+    }
+  },
   created() {
     let inputTypeConverting = {
       "NUM": 'text',
@@ -114,34 +77,20 @@ export default {
       "TAREA": 'textarea'
     }
     
-    for(let header of this.GET_TABLE_HEADERS) {
-      if(header.type !== 'TAREA') {
-        this.inputForms[header.name] = {
-          name: header.title,
-          value: this.row[header.name],
-          formType: inputTypeConverting[header.type]
-        }
+    for (let header of this.GET_TABLE_HEADERS) {
+      let value = ''
+      if(header.type === 'DTIME') {
+        value = this.row[header.name].replace(/\s/g, 'T')
+      } else {
+        value = this.row[header.name]
       }
-    }
-  },
-  methods: {
-    ...mapMutations([
-      'REFRESH_RAPPORT'
-    ]),
-    onFormsAction(type) {  //в каком формате взяли, в таком же формате и отдаем
-      if (type === 1) {
-        let refreshedField = {
-          id_ves: this.field.id_ves
-        }
-        
-        for (let key in this.field) {
-          if (this.field.hasOwnProperty(key) && (key in this.inputForms)) {
-            refreshedField[key] = this.inputForms[key].value
-          }
-        }
-        // this.REFRESH_RAPPORT(refreshedField)
-      }
-      this.$emit('closeForms')
+      
+      this.inputForms.push({
+        name: header.name,
+        title: header.title,
+        value,
+        formType: inputTypeConverting[header.type]
+      })
     }
   }
 }

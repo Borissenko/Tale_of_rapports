@@ -13,8 +13,8 @@ export default new Vuex.Store({
     GET_DATA: state => state.data,
     GET_TABLE_HEADERS: ({data}) => {
       let ColsTitlesEntries = Object.entries(data.ColsTitles)
-      console.log('ColsTitlesEntries ===', ColsTitlesEntries)
       let headers = []
+      
       for (let headerEntries of ColsTitlesEntries) {
         headers.push({
           name: headerEntries[0],
@@ -24,6 +24,7 @@ export default new Vuex.Store({
           show: data.ColsShow[headerEntries[0]]
         })
       }
+      
       headers.sort((a, b) => a.order - b.order)
       headers.sort((a, b) => a.order - b.order)
       return headers.filter(item => item.show !== 0)

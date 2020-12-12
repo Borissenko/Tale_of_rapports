@@ -3,114 +3,106 @@
     <h1>Корректировка ССД</h1>
     inputForms = {{inputForms}}
     <hr>
-    <h2>ID донесения - {{field.id_ves}}</h2>
+    <h2>ID донесения - {{row.id_ves}}</h2>
     <div>
-      <div v-for="(form, key, ind) of inputForms"
-           :key="ind + 'num'"
+      <div v-for="(form, ind) of inputForms.filter(form => form.formType !== 'textarea')"
+           :key="ind + 'input'"
            class="field"
       >
-        {{form.name}}
+        {{form.title}}
         <input :type="form.formType"
                v-model="form.value"
-               :placeholder="form.name"
+               :placeholder="form.title"
         >
       </div>
-      <div>
-        <div>{{textAreaForms.note.name}}</div>
-        <textarea cols="70" rows="6"></textarea>
+      
+      <div v-for="(form, ind) of inputForms.filter(form => form.formType === 'textarea')"
+           :key="ind + 'textarea'"
+      >
+        <div>{{form.title}}</div>
+        <textarea cols="70" rows="6"
+                  v-model="form.value"
+        />
       </div>
     </div>
     <div class="controls">
-      <div @click="onFormsAvoid" class="controls__btn">Не сохранять</div>
-      <div @click="onFormsSave" class="controls__btn">Сохранить</div>
+      <div @click="onFormsAction(0)" class="controls__btn">Не сохранять</div>
+      <div @click="onFormsAction(1)" class="controls__btn">Сохранить</div>
     </div>
   </div>
 </template>
 
 <script>
+import {mapGetters, mapMutations} from 'vuex'
+
 export default {
   props: {
-    field: {
+    row: {
       type: Object,
       required: true
     }
   },
   computed: {
-    inputForms: {
-      get() {
-        return {
-          "id_rank": {
-            name: 'Категория',
-            value: this.field.id_rank,
-            formType: 'text'
-          },
-          "id_region": {
-            name: 'Регион',
-            value: this.field.id_region,
-            formType: 'text'
-          },
-          "id_region_to": {
-            name: 'Регион следования',
-            value: this.field.id_region_to,
-            formType: 'text'
-          },
-          "id_information_source": {
-            name: 'Источник информации',
-            value: this.field.id_information_source,
-            formType: 'text'
-          },
-          "id_regime": {
-            name: 'Код запаса',
-            value: this.field.id_regime,
-            formType: 'text'
-          },
-          "permit": {
-            name: 'Разрешение',
-            value: this.field.permit,
-            formType: 'text'
-          },
-          "date": {
-            name: 'Дата',
-            value: this.field.date,
-            formType: 'date'
-          },
-          "date_arrival": {
-            name: 'Дата прибытия',
-            value: this.field.date_arrival,
-            formType: 'date'
-          },
-          "timestamp": {
-            name: 'Дата, время',
-            value: this.field.timestamp,
-            formType: 'datetime-local'
-          },
-          "datetime": {
-            name: 'Дата, время 2',
-            value: this.field.datetime,
-            formType: 'datetime-local'
-          },
+    ...mapGetters([
+      'GET_TABLE_HEADERS'
+    ])
+  },
+  data: () => ({
+    inputForms: []
+  }),
+  methods: {
+    ...mapMutations([
+      'REFRESH_RAPPORT'
+    ]),
+    onFormsAction(type) {  //в каком формате получили, в таком же формате и отдаем
+      let isDownload = false
+      if (type === 1) {
+        let refreshedField = {
+          id_ves: this.row.id_ves
         }
-      },
-      set(val) {
-        console.log('val ==', val)
-      }
-    },
-    textAreaForms() {
-      return {
-        note: {
-          name: 'Примечание',
-          value: this.field.note,
+
+        for (let field of this.inputForms) {
+          if(field.formType === 'datetime-local') {
+            refreshedField[field.name] = field.value.replace(/T/, ' ')
+          } else if(field.valueType === 'NUM') {
+            refreshedField[field.name] = Number(field.value)
+          } else {
+            refreshedField[field.name] = field.value
+          }
         }
+
+        this.REFRESH_RAPPORT(refreshedField)
+        isDownload = true
       }
+      this.$emit('closeForms', isDownload)
     }
   },
-  methods: {
-    onFormsSave() {
-      console.log('inputForms ==', this.inputForms)
-      this.$emit('closeForms')
-    },
-    onFormsAvoid() {
-      this.$emit('closeForms')
+  created() {
+    let inputTypeConverting = {
+      "NUM": 'text',
+      "STR": 'text',
+      "DATE": 'date',
+      "DTIME": 'datetime-local',
+      "TAREA": 'textarea'
+    }
+    
+    for (let header of this.GET_TABLE_HEADERS) {
+      if (header.name !== 'id_ves') {
+        let value = ''
+        if (header.type === 'DTIME') {
+          value = this.row[header.name].replace(/\s/g, 'T').split('Z')[0]
+        } else {
+          value = this.row[header.name]
+        }
+        
+        this.inputForms.push({
+          name: header.name,
+          title: header.title,
+          value,
+          formType: inputTypeConverting[header.type],
+          valueType: header.type
+        })
+      }
     }
   }
 }
@@ -134,23 +126,6 @@ export default {
   textarea {
     width: 100%;
     resize: none;
-  }
-  
-  .controls {
-    display: flex;
-    margin-top: 20px;
-    justify-content: space-between;
-    
-    &__btn {
-      padding: 5px;
-      border: $darkGrey 1px solid;
-      color: $mainColor;
-      cursor: pointer;
-      
-      &:hover {
-        color: $mainColorHover;
-      }
-    }
   }
 }
 </style>

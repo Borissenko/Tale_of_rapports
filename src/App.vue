@@ -30,6 +30,7 @@
           </th>
         </tr>
         </thead>
+        
         <tbody>
         <tr v-for="(field, ind) of GET_TABLE_FIELDS" :key="ind + 'field'"
             @click="onRedaction(field)"
@@ -41,9 +42,14 @@
         </tbody>
       </table>
       
-      <forms-block @closeForms="showForms = false"
+      
+      <div v-if="isDownload" class="controls">
+        <div @click="takeNewRapports" class="controls__btn">Применить изменения</div>
+      </div>
+      
+      <forms-block @closeForms="closeForms"
                    v-if="showForms"
-                   :field = showForms
+                   :row=showForms
                    class="forms-block"
       />
     </div>
@@ -60,7 +66,8 @@ export default {
   },
   data: () => ({
     isDefaultTheme: false,
-    showForms: false
+    showForms: false,
+    isDownload: false
   }),
   computed: {
     ...mapGetters([
@@ -90,7 +97,25 @@ export default {
     },
     onRedaction(field) {
       this.showForms = field
-      console.log('field ==', field)
+    },
+    takeNewRapports() {
+      let headerConvertor = this.GET_DATA.ColsTitles
+      let entitledFields = this.GET_TABLE_FIELDS.map( row => {
+        let newRow = {}
+        for(let key in row) {
+          if(row.hasOwnProperty(key)) {
+            newRow[headerConvertor[key]] = row[key]
+          }
+        }
+        return newRow
+      })
+      
+      var opts = [{sheetid: 'Обновленные рапорты', header: true}]
+      var res = alasql('SELECT * INTO XLSX("restest344b.xlsx",?) FROM ?', [opts, [entitledFields]])
+    },
+    closeForms(isDownload) {
+      this.showForms = false
+      this.isDownload = isDownload
     }
   }
 }
@@ -144,7 +169,7 @@ export default {
       padding: 10px;
       text-transform: uppercase;
     }
-  
+    
     thead tr th {
       border-top: 1px $mainColor solid;
       border-bottom: 1px $mainColor solid;
@@ -174,7 +199,7 @@ export default {
       }
       
     }
-  
+    
     tbody tr td {
       padding-right: 5px;
     }

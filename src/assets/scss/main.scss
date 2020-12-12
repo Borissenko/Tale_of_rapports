@@ -18,5 +18,22 @@ h2 {
   font-weight: 700;
 }
 
+.controls {
+  display: flex;
+  margin-top: 20px;
+  justify-content: space-between;
+
+  &__btn {
+    padding: 5px;
+    border: $darkGrey 1px solid;
+    color: $mainColor;
+    cursor: pointer;
+
+    &:hover {
+      color: $mainColorHover;
+    }
+  }
+}
+
 
 

@@ -43,11 +43,11 @@
       </table>
       
       
-      <div class="controls">
+      <div v-if="isDownload" class="controls">
         <div @click="takeNewRapports" class="controls__btn">Применить изменения</div>
       </div>
       
-      <forms-block @closeForms="showForms = false"
+      <forms-block @closeForms="closeForms"
                    v-if="showForms"
                    :row=showForms
                    class="forms-block"
@@ -66,7 +66,8 @@ export default {
   },
   data: () => ({
     isDefaultTheme: false,
-    showForms: false
+    showForms: false,
+    isDownload: false
   }),
   computed: {
     ...mapGetters([
@@ -98,22 +99,24 @@ export default {
       this.showForms = field
     },
     takeNewRapports() {
-      let aa = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-      let data = []
-      let XLrow = {}
-      
-      this.GET_TABLE_HEADERS.forEach((cell, ind) => {
-        XLrow[aa[ind]] = cell.title
+      let headerConvertor = this.GET_DATA.ColsTitles
+      let entitledFields = this.GET_TABLE_FIELDS.map( row => {
+        let newRow = {}
+        for(let key in row) {
+          if(row.hasOwnProperty(key)) {
+            newRow[headerConvertor[key]] = row[key]
+          }
+        }
+        return newRow
       })
-      data.push(XLrow)
       
-      
-      
-      var data1 = [{a: 1, b: 10}, {a: 2, b: 20}, {a: 244, b: 2044}]
       var opts = [{sheetid: 'Обновленные рапорты', header: true}]
-      var res = alasql('SELECT * INTO XLSX("restest344b.xlsx",?) FROM ?', [opts, [data]])
+      var res = alasql('SELECT * INTO XLSX("restest344b.xlsx",?) FROM ?', [opts, [entitledFields]])
+    },
+    closeForms(isDownload) {
+      this.showForms = false
+      this.isDownload = isDownload
     }
-    
   }
 }
 </script>

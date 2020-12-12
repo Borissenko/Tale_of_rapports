@@ -54,6 +54,7 @@ export default {
       'REFRESH_RAPPORT'
     ]),
     onFormsAction(type) {  //в каком формате получили, в таком же формате и отдаем
+      let isDownload = false
       if (type === 1) {
         let refreshedField = {
           id_ves: this.row.id_ves
@@ -66,8 +67,9 @@ export default {
           }
         }
         this.REFRESH_RAPPORT(refreshedField)
+        isDownload = true
       }
-      this.$emit('closeForms')
+      this.$emit('closeForms', isDownload)
     }
   },
   created() {

@@ -1,7 +1,6 @@
 <template>
   <div class="forms-wrapper">
     <h1>Корректировка ССД</h1>
-    inputForms = {{inputForms}}
     <hr>
     <h2>ID донесения - {{row.id_ves}}</h2>
     <div>

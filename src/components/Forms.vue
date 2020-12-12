@@ -59,13 +59,17 @@ export default {
         let refreshedField = {
           id_ves: this.row.id_ves
         }
+
         for (let field of this.inputForms) {
           if(field.formType === 'datetime-local') {
             refreshedField[field.name] = field.value.replace(/T/, ' ')
+          } else if(field.valueType === 'NUM') {
+            refreshedField[field.name] = Number(field.value)
           } else {
             refreshedField[field.name] = field.value
           }
         }
+
         this.REFRESH_RAPPORT(refreshedField)
         isDownload = true
       }
@@ -94,7 +98,8 @@ export default {
           name: header.name,
           title: header.title,
           value,
-          formType: inputTypeConverting[header.type]
+          formType: inputTypeConverting[header.type],
+          valueType: header.type
         })
       }
     }
